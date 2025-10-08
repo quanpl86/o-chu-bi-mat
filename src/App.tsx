@@ -3,6 +3,7 @@ import { GameState, Question } from './types'; // This path is correct now
 import { QUESTIONS_BANK } from './constants'; // This path is correct now
 import GameScreen from './components/GameScreen'; // This path is correct now
 import WinScreen from './components/WinScreen'; // This path is correct now
+import StartScreen from './components/StartScreen'; // This path is correct now
 import SolveModal from './components/SolveModal'; // This path is correct now
 
 // Utility function to shuffle an array
@@ -16,13 +17,15 @@ const shuffleArray = (array: Question[]): Question[] => {
 };
 
 const App: React.FC = () => {
-  const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
+  const [gameState, setGameState] = useState<GameState>(GameState.START);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealedWords, setRevealedWords] = useState<boolean[]>(Array(QUESTIONS_BANK.length).fill(false));
   const [gameTime, setGameTime] = useState(0);
+  const [score, setScore] = useState(0);
   const [isSolveModalOpen, setIsSolveModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<Record<number, 'correct' | 'incorrect' | null>>({});
   const [isJustSolved, setIsJustSolved] = useState(false); // Trạng thái mới để xử lý hiệu ứng khi giải đố đúng
+  const [isAnswering, setIsAnswering] = useState(false); // Trạng thái mới để chặn click khi đang có hiệu ứng
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [secretKeyword, setSecretKeyword] = useState('');
@@ -30,6 +33,10 @@ const App: React.FC = () => {
   // Tạo đối tượng âm thanh
   const correctSound = useMemo(() => new Audio('/correct.mp3'), []);
   const incorrectSound = useMemo(() => new Audio('/incorrect.mp3'), []);
+
+  const startGame = useCallback(() => {
+    setGameState(GameState.PLAYING);
+  }, []);
 
   const resetGame = useCallback(() => {
     // Add originalIndex to each question and then shuffle
@@ -42,11 +49,13 @@ const App: React.FC = () => {
     ).join(' ').trim();
     setSecretKeyword(keyword);
 
-    setGameState(GameState.PLAYING);
+    setGameState(GameState.START);
     setCurrentQuestionIndex(0);
     setRevealedWords(Array(QUESTIONS_BANK.length).fill(false));
     setGameTime(0);
+    setScore(0);
     setIsSolveModalOpen(false);
+    setIsAnswering(false);
     setFeedback({});
     setIsJustSolved(false);
   }, []);
@@ -67,10 +76,13 @@ const App: React.FC = () => {
 
   const handleAnswer = (choiceIndex: number) => {
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
-    if (currentQuestion?.originalIndex === undefined) return;
+    // Chặn click nếu đang trong quá trình xử lý câu trả lời trước đó
+    if (isAnswering || currentQuestion?.originalIndex === undefined) return;
 
+    setIsAnswering(true); // Bắt đầu chặn click
     if (choiceIndex === currentQuestion.correctChoiceIndex) {
       correctSound.play();
+      setScore(prevScore => prevScore + 20);
       setFeedback(prev => ({ ...prev, [choiceIndex]: 'correct' }));
       setTimeout(() => {
         const newRevealedWords = [...revealedWords];
@@ -84,16 +96,27 @@ const App: React.FC = () => {
           setCurrentQuestionIndex(shuffledQuestions.length);
         }
         setFeedback({});
+        setIsAnswering(false); // Kết thúc chặn click
       }, 1500); // CHỈNH SỬA TẠI ĐÂY: Tăng thời gian chờ để hiệu ứng hiển thị lâu hơn
     } else {
       incorrectSound.play();
       setFeedback(prev => ({ ...prev, [choiceIndex]: 'incorrect' }));
-      setTimeout(() => setFeedback(prev => ({ ...prev, [choiceIndex]: null })), 500);
+      // CHỈNH SỬA TẠI ĐÂY: Chuyển sang câu hỏi tiếp theo sau khi trả lời sai
+      setTimeout(() => {
+        if (currentQuestionIndex < shuffledQuestions.length - 1) {
+          setCurrentQuestionIndex(prev => prev + 1);
+        } else {
+          setCurrentQuestionIndex(shuffledQuestions.length);
+        }
+        setFeedback({});
+        setIsAnswering(false); // Kết thúc chặn click
+      }, 1500); // Giữ thời gian chờ để người chơi thấy phản hồi
     }
   };
 
   const handleSolveAttempt = (attempt: string) => {
     if (attempt.trim().toUpperCase() === secretKeyword.toUpperCase()) {
+      setScore(prevScore => prevScore + 100); // Cộng 100 điểm khi giải đúng từ khóa
       setIsJustSolved(true); // Kích hoạt hiệu ứng chỉ hiển thị từ khóa bí mật
       // Chuyển sang màn hình chiến thắng sau một khoảng trễ
       setTimeout(() => {
@@ -114,7 +137,7 @@ const App: React.FC = () => {
       // 'justify-end' sẽ đẩy nội dung xuống dưới cùng của màn hình.
       className="text-white min-h-screen flex flex-col items-center justify-end p-4"
       style={{
-        backgroundImage: `url('/Background.jpg')`,
+        backgroundImage: `url('/background.png')`,
         backgroundSize: 'cover',
         backgroundColor: '#003466',
         backgroundPosition: 'center',
@@ -129,7 +152,7 @@ const App: React.FC = () => {
         // Ràng buộc cả chiều rộng và chiều cao tối đa.
         // Trình duyệt sẽ tự động co giãn để vừa với màn hình mà vẫn giữ tỷ lệ.
         // CHỈNH SỬA TẠI ĐÂY: Giảm giá trị 'max-h-*' (ví dụ: max-h-[85vh]) để giảm chiều cao của khung game.
-        className="w-full h-full max-w-[95vw] max-h-[85vh] @container">
+        className="w-full h-full max-w-[95vw] max-h-[85vh] @container relative">
         {gameState === GameState.PLAYING && (
           <GameScreen
             currentQuestion={currentQuestion}
@@ -140,14 +163,32 @@ const App: React.FC = () => {
             onAnswer={handleAnswer}
             onSolveClick={() => setIsSolveModalOpen(true)}
             gameTime={gameTime}
+            score={score}
+            isAnswering={isAnswering}
             feedback={feedback}
           highlightSecretOnly={isJustSolved} // Truyền prop mới xuống
           />
         )}
+        {gameState === GameState.START && (
+          <>
+            {/* Render empty frames */}
+            <GameScreen
+              crosswordData={QUESTIONS_BANK as Question[]}
+              revealedWords={revealedWords}
+              isFinished={false}
+              onAnswer={() => {}}
+              onSolveClick={() => {}}
+              gameTime={0}
+              score={0}
+              isAnswering={false}
+              feedback={{}}
+              highlightSecretOnly={false}
+            />
+            <StartScreen onStart={startGame} />
+          </>
+        )}
       </div>
-      {gameState === GameState.WON && (
-        <WinScreen time={gameTime} onPlayAgain={resetGame} />
-      )}
+      {gameState === GameState.WON && <WinScreen time={gameTime} score={score} onPlayAgain={resetGame} />}
       <SolveModal 
         isOpen={isSolveModalOpen}
         onClose={() => setIsSolveModalOpen(false)}

@@ -13,7 +13,7 @@ const Timer: React.FC<TimerProps> = ({ seconds }) => {
   };
 
   return (
-    <div className="bg-blue-900/40 backdrop-blur-sm border border-cyan-400/50 shadow-lg shadow-cyan-500/20 text-white font-mono px-4 py-2 rounded-lg" style={{ fontSize: '1.2cqw' }}>
+    <div className="bg-blue-900/40 backdrop-blur-sm border border-white shadow-lg shadow-cyan-500/20 text-white font-mono px-4 py-2 rounded-lg" style={{ fontSize: '1.2cqw' }}>
       {formatTime(seconds)}
     </div>
   );

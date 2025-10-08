@@ -39,6 +39,28 @@
       @keyframes rainbow-rotate {
         100% { transform: rotate(360deg); }
       }
+      .firework-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: hsl(var(--hue), 100%, 70%);
+        box-shadow: 0 0 5px hsl(var(--hue), 100%, 70%), 0 0 10px hsl(var(--hue), 100%, 70%);
+        opacity: 0;
+        animation-name: firework-burst;
+        animation-timing-function: ease-out;
+        animation-iteration-count: infinite;
+      }
+      @keyframes firework-burst {
+        0% {
+          transform: scale(0);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(25);
+          opacity: 0;
+        }
+      }
     </style>
   <script type="importmap">
 {

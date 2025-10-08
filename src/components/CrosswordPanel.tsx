@@ -1,25 +1,34 @@
 import React from 'react';
 import { Question } from '../types';
-import Timer from './Timer';
 
 interface CrosswordPanelProps {
   gameData: Question[];
   revealedWords: boolean[];
-  gameTime: number;
   highlightSecretOnly: boolean;
 }
 
-const CrosswordPanel: React.FC<CrosswordPanelProps> = ({ gameData, revealedWords, gameTime, highlightSecretOnly }) => {
+const CrosswordPanel: React.FC<CrosswordPanelProps> = ({ gameData, revealedWords, highlightSecretOnly }) => {
   const maxLength = Math.max(...gameData.map(q => q.horizontalWords.length));
 
   return (
     <div 
-      className="bg-blue-900/40 backdrop-blur-sm border border-cyan-400/50 shadow-lg shadow-cyan-500/20 flex flex-col h-full"
-      style={{ padding: '2cqw', borderRadius: '2cqw', gap: '2cqw' }}
+      className="relative backdrop-blur-sm shadow-lg shadow-cyan-500/20 flex flex-col overflow-hidden aspect-[15/10]"
+      style={{ 
+        padding: '4cqw', 
+        borderRadius: '2cqw', 
+        gap: '2cqw',
+      }}
     >
-      <div className="flex justify-end">
-        <Timer seconds={gameTime} />
-      </div>
+      {/* Div này chỉ dùng để hiển thị ảnh nền đã được lật */}
+      <div 
+        className="absolute inset-0 w-full h-full -z-10"
+        style={{
+          backgroundImage: `url('/Frame1.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transform: 'scaleX(-1)' // Lật ảnh nền theo chiều ngang
+        }}
+      ></div>
       <div className="grid flex-grow" style={{ gridTemplateRows: `repeat(${gameData.length}, minmax(0, 1fr))`, gap: '1cqw' }}>
         {gameData.map((data, rowIndex) => (
           <div key={rowIndex} className="grid" style={{ gridTemplateColumns: `repeat(${maxLength}, minmax(0, 1fr))`, gap: '1cqw' }}>
@@ -41,7 +50,7 @@ const CrosswordPanel: React.FC<CrosswordPanelProps> = ({ gameData, revealedWords
                   : word ? 'bg-blue-900' : 'bg-transparent';
 
               return (
-                <div key={colIndex} className={`${cellClasses} ${textVisibilityClass} ${backgroundClass}`} style={{ fontSize: '1.2cqw', borderRadius: '1cqw' }}>
+                <div key={colIndex} className={`${cellClasses} ${textVisibilityClass} ${backgroundClass}`} style={{ fontSize: '0.8cqw', borderRadius: '1cqw' }}>
                     {word}
                 </div>
               );

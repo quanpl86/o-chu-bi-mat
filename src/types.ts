@@ -1,5 +1,6 @@
 // FIX: Removed self-referential import of `GameState`.
 export enum GameState {
+  START,
   PLAYING,
   WON,
 }
