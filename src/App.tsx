@@ -34,12 +34,21 @@ const App: React.FC = () => {
   const correctSound = useMemo(() => new Audio('/correct.mp3'), []);
   const incorrectSound = useMemo(() => new Audio('/incorrect.mp3'), []);
   const victorySound = useMemo(() => new Audio('/vitory.mp3'), []);
-
-  const startGame = useCallback(() => {
-    setGameState(GameState.PLAYING);
+  const backgroundMusic = useMemo(() => {
+    const audio = new Audio('/background_music.mp3');
+    audio.loop = true;
+    audio.volume = 0.8; // Âm lượng ở mức 40%
+    return audio;
   }, []);
 
+  const startGame = useCallback(() => {
+    backgroundMusic.play();
+    setGameState(GameState.PLAYING);
+  }, [backgroundMusic]);
+
   const resetGame = useCallback(() => {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
     // Add originalIndex to each question and then shuffle
     const questionsToShuffle = QUESTIONS_BANK.map((q, index) => ({ ...q, originalIndex: index }));
     setShuffledQuestions(shuffleArray(questionsToShuffle));
@@ -59,7 +68,7 @@ const App: React.FC = () => {
     setIsAnswering(false);
     setFeedback({});
     setIsJustSolved(false);
-  }, []);
+  }, [backgroundMusic]);
 
   // Initialize game on first load
   useEffect(() => {
@@ -117,6 +126,8 @@ const App: React.FC = () => {
 
   const handleSolveAttempt = (attempt: string) => {
     if (attempt.trim().toUpperCase() === secretKeyword.toUpperCase()) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
       correctSound.play(); // Phát âm thanh khi giải đúng từ khóa
       setScore(prevScore => prevScore + 100); // Cộng 100 điểm khi giải đúng từ khóa
       setIsJustSolved(true); // Kích hoạt hiệu ứng chỉ hiển thị từ khóa bí mật
