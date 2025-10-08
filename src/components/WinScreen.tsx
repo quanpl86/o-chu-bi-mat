@@ -33,11 +33,11 @@ const WinScreen: React.FC<WinScreenProps> = ({ time, score, onPlayAgain }) => {
         - Các lớp `flex items-center justify-center` ở thẻ div cha giúp căn giữa hộp thoại.
         - Thay đổi giá trị `max-w-*` (ví dụ: max-w-3xl) để điều chỉnh độ rộng của hộp thoại.
       */}
-      <div className="relative flex flex-col items-center justify-center text-center p-8 bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700 w-full max-w-[90vw] lg:max-w-7xl">
+      <div className="relative flex flex-col items-center justify-center text-center p-8 bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-white w-full max-w-[90vw] lg:max-w-7xl">
         {showFireworks && <Fireworks />} {/* Chỉ hiển thị pháo hoa trong 5 giây đầu */}
         {/* Bọc nội dung trong một div riêng với z-index cao hơn để nó nổi lên trên pháo hoa */}
         <div className="relative z-10 flex flex-col items-center">
-          <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 mb-4">CHÚC MỪNG!</h1>
+          <h1 className="text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 mb-4">CHÚC MỪNG!</h1>
           <p className="text-xl text-gray-300 mb-2">Bạn đã giải được ô chữ bí mật!</p>
           <p className="text-2xl font-semibold text-white mb-6">
             Tổng điểm: <span className="text-yellow-400">{score}</span>

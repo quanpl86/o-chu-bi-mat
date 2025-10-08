@@ -12,8 +12,8 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
         - Các lớp `flex items-center justify-center` ở thẻ div cha giúp căn giữa hộp thoại.
         - Thay đổi giá trị `max-w-*` (ví dụ: max-w-3xl) để điều chỉnh độ rộng của hộp thoại.
       */}
-      <div className="bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-gray-700 text-center w-full max-w-[90vw] lg:max-w-7xl">
-        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 mb-4">Ô CHỮ BÍ MẬT</h1>
+      <div className="bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border-2 border-white text-center w-full max-w-[90vw] lg:max-w-7xl">
+        <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 mb-4">TRÒ CHƠI Ô CHỮ BÍ MẬT</h1>
         <div className="text-lg text-gray-300 mb-6 text-left leading-relaxed px-4">
           <strong>Luật chơi:</strong>
           <ul className="list-disc list-inside mt-2 space-y-2">

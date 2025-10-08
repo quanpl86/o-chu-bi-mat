@@ -33,6 +33,7 @@ const App: React.FC = () => {
   // Tạo đối tượng âm thanh
   const correctSound = useMemo(() => new Audio('/correct.mp3'), []);
   const incorrectSound = useMemo(() => new Audio('/incorrect.mp3'), []);
+  const victorySound = useMemo(() => new Audio('/vitory.mp3'), []);
 
   const startGame = useCallback(() => {
     setGameState(GameState.PLAYING);
@@ -116,13 +117,16 @@ const App: React.FC = () => {
 
   const handleSolveAttempt = (attempt: string) => {
     if (attempt.trim().toUpperCase() === secretKeyword.toUpperCase()) {
+      correctSound.play(); // Phát âm thanh khi giải đúng từ khóa
       setScore(prevScore => prevScore + 100); // Cộng 100 điểm khi giải đúng từ khóa
       setIsJustSolved(true); // Kích hoạt hiệu ứng chỉ hiển thị từ khóa bí mật
       // Chuyển sang màn hình chiến thắng sau một khoảng trễ
       setTimeout(() => {
+        victorySound.play(); // Phát âm thanh chiến thắng
         setGameState(GameState.WON);
       }, 3000); // 3 giây để người chơi xem từ khóa
     } else {
+      incorrectSound.play(); // Phát âm thanh khi giải sai từ khóa
       alert("Sai rồi! Hãy thử lại.");
     }
     setIsSolveModalOpen(false);
@@ -163,6 +167,7 @@ const App: React.FC = () => {
             onAnswer={handleAnswer}
             onSolveClick={() => setIsSolveModalOpen(true)}
             gameTime={gameTime}
+            gameState={gameState}
             score={score}
             isAnswering={isAnswering}
             feedback={feedback}
@@ -179,15 +184,16 @@ const App: React.FC = () => {
               onAnswer={() => {}}
               onSolveClick={() => {}}
               gameTime={0}
+              gameState={gameState}
               score={0}
               isAnswering={false}
               feedback={{}}
               highlightSecretOnly={false}
             />
-            <StartScreen onStart={startGame} />
           </>
         )}
       </div>
+      {gameState === GameState.START && <StartScreen onStart={startGame} />}
       {gameState === GameState.WON && <WinScreen time={gameTime} score={score} onPlayAgain={resetGame} />}
       <SolveModal 
         isOpen={isSolveModalOpen}

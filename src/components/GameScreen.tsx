@@ -1,5 +1,5 @@
 import React from 'react';
-import { Question } from '../types';
+import { GameState, Question } from '../types';
 import QuestionPanel from './QuestionPanel';
 import Score from './Score';
 import Timer from './Timer'; // Import Timer component
@@ -14,6 +14,7 @@ interface GameScreenProps {
   onAnswer: (choiceIndex: number) => void;
   onSolveClick: () => void;
   gameTime: number;
+  gameState: GameState;
   score: number;
   isAnswering: boolean;
   feedback: Record<number, 'correct' | 'incorrect' | null>;
@@ -29,6 +30,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
   onAnswer,
   onSolveClick,
   gameTime,
+  gameState,
   score,
   isAnswering,
   feedback,
@@ -42,7 +44,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         - Thay đổi `-mb-*` (margin-bottom âm) để điều chỉnh khoảng cách, đẩy banner lên cao hơn (ví dụ: -mb-4).
       */}
       <div className="flex justify-center -mb-4">
-        <img src="/banner.png" alt="Ô Chữ Bí Mật Banner" className="max-w-5xl h-auto rounded-lg shadow-lg" />
+        <img src="/banner.png" alt="Ô Chữ Bí Mật Banner" className="max-w-5xl h-auto rounded-lg shadow-lg filter brightness-255" />
       </div>
 
       {/* Container cho Điểm và Thời gian, đặt ở góc trên bên trái */}
@@ -51,23 +53,29 @@ const GameScreen: React.FC<GameScreenProps> = ({
         <Timer seconds={gameTime} />
       </div>
 
-      {/* Bố cục 2 cột cho các khung game */}
-      <main className="grid grid-cols-2 w-full" style={{ gap: '5cqw' }}>
-        <QuestionPanel
-          questionData={currentQuestion}
-          onAnswer={onAnswer}
-          isFinished={isFinished}
-          questionNumber={questionNumber}
-          feedback={feedback}
-        isAnswering={isAnswering}
-          onSolveClick={onSolveClick}
-        />
-        <CrosswordPanel
-          gameData={crosswordData}
-          revealedWords={revealedWords}
-          highlightSecretOnly={highlightSecretOnly}
-        />
-      </main>
+      {/* Container này chứa các khung game và lớp phủ làm tối */}
+      <div className="relative">
+        {/* Lớp phủ này sẽ làm tối các khung game khi cần */}
+        {(gameState === GameState.START || gameState === GameState.WON) && (
+          <div className="absolute inset-0 bg-black/50 z-10 rounded-lg"></div>
+        )}
+        <main className="grid grid-cols-2 w-full" style={{ gap: '5cqw' }}>
+          <QuestionPanel
+            questionData={currentQuestion}
+            onAnswer={onAnswer}
+            isFinished={isFinished}
+            questionNumber={questionNumber}
+            feedback={feedback}
+            isAnswering={isAnswering}
+            onSolveClick={onSolveClick}
+          />
+          <CrosswordPanel
+            gameData={crosswordData}
+            revealedWords={revealedWords}
+            highlightSecretOnly={highlightSecretOnly}
+          />
+        </main>
+      </div>
     </div>
   );
 };
