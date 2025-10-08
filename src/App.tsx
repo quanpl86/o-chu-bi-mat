@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { GameState, Question } from './types';
-import { QUESTIONS_BANK } from './constants';
-import GameScreen from './components/GameScreen';
-import WinScreen from './components/WinScreen';
-import SolveModal from './components/SolveModal';
+import { GameState, Question } from './types'; // This path is correct now
+import { QUESTIONS_BANK } from './constants'; // This path is correct now
+import GameScreen from './components/GameScreen'; // This path is correct now
+import WinScreen from './components/WinScreen'; // This path is correct now
+import SolveModal from './components/SolveModal'; // This path is correct now
 
 // Utility function to shuffle an array
 const shuffleArray = (array: Question[]): Question[] => {
