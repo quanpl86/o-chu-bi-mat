@@ -156,7 +156,8 @@ const App: React.FC = () => {
     <div 
       // CHỈNH SỬA TẠI ĐÂY:
       // 'justify-end' sẽ đẩy nội dung xuống dưới cùng của màn hình.
-      className="text-white min-h-screen flex flex-col items-center justify-end p-4"
+      // Thêm 'pb-10' để tăng khoảng cách đệm ở phía dưới.
+      className="text-white min-h-screen flex flex-col items-center justify-end p-4 pb-100"
       style={{
         backgroundImage: `url('/background.png')`,
         backgroundSize: 'cover',
@@ -164,8 +165,6 @@ const App: React.FC = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         // CHỈNH SỬA TẠI ĐÂY:
-        // Thay đổi giá trị paddingBottom để điều chỉnh khoảng cách từ đáy màn hình.
-        paddingBottom: '20px',
       }}
     >
       {/* Container này sẽ duy trì tỷ lệ và co giãn tương ứng */}

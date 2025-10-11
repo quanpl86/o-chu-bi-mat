@@ -44,7 +44,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
         - Thay đổi `-mb-*` (margin-bottom âm) để điều chỉnh khoảng cách, đẩy banner lên cao hơn (ví dụ: -mb-4).
       */}
       <div className="flex justify-center -mb-4">
-        <img src="/banner.png" alt="Ô Chữ Bí Mật Banner" className="max-w-5xl h-auto rounded-lg shadow-lg filter brightness-255" />
+        <img src="/banner.png" alt="Ô Chữ Bí Mật Banner" className="max-w-4xl h-auto rounded-lg shadow-lg filter brightness-125" />
       </div>
 
       {/* Container cho Điểm và Thời gian, đặt ở góc trên bên trái */}
