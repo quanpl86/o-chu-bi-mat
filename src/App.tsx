@@ -16,6 +16,12 @@ const shuffleArray = (array: Question[]): Question[] => {
   return newArray;
 };
 
+// Hàm chuẩn hóa chuỗi: bỏ dấu và chuyển thành chữ hoa
+const normalizeString = (str: string): string => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+};
+
+
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.START);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -125,7 +131,7 @@ const App: React.FC = () => {
   };
 
   const handleSolveAttempt = (attempt: string) => {
-    if (attempt.trim().toUpperCase() === secretKeyword.toUpperCase()) {
+    if (normalizeString(attempt.trim()) === normalizeString(secretKeyword)) {
       backgroundMusic.pause();
       backgroundMusic.currentTime = 0;
       correctSound.play(); // Phát âm thanh khi giải đúng từ khóa
